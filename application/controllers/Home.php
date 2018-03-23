@@ -4,31 +4,65 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Home extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
-
+		// load Pagination library
+		$this->load->library('pagination');
+		// load URL helper
+		$this->load->helper('url');
 		//load home model
 		$this->load->model('home_model');
 		$this->check_isvalidated();
 	}
 
-	public function index(){
+	public function index() {
 		echo '<h4>Congratulations, you are logged in.</h4>';
 		// Add a link to logout
-		echo '<h2><a href="home/do_logout" style="float: right;margin-top: -35px;">Logout</a></h2>';
 		//get data from db
-		$data['images'] = $this->home_model->get_images();
-		
-		//load view and pass images
-		$this->load->view('home_view', $data);
-	}
+		$params = array();
 
+		$params['images'] = $this->home_model->get_images();
+        // init params
+        $limit_per_page = 8;
+        $start_index = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $total_records = $this->home_model->get_total();
+ 
+        if ($total_records > 0) 
+        {
+            // get current page records
+            $params["results"] = $this->home_model->get_current_page_records($limit_per_page, $start_index);
+             
+            $config['base_url'] = base_url() . 'home/index';
+            $config['total_rows'] = $total_records;
+            $config['per_page'] = $limit_per_page;
+            $config["uri_segment"] = 3;
+             
+            $this->pagination->initialize($config);
+             
+            // build paging links
+            $params["links"] = $this->pagination->create_links();
+        }
+        if ($this->input->post('name_search') != "") {
+			$params["record"] = $this->search();
+			// print_r($params["record"]);
+		}
+        $this->load->view('home_view', $params);
+	}
+	
+	public function search(){
+		if($this->input->post('name_search') != "")
+		{	
+			$data = $this->input->post('name_search');
+			$result = $this->home_model->search_in_db($data);
+			// $this->load->view('search_view', $result);
+			return $result;		
+		}
+		else{
+		redirect('');			
+		}	
+	}
 	private function check_isvalidated(){
         if(! $this->session->userdata('validated')){
             redirect('login');
         }
-	}
-	public function clear_cache(){
-        $this->output->set_header("Cache-Control: no-store, no-cache, must-revalidate, no-transform, max-age=0, post-check=0, pre-check=0");
-        $this->output->set_header("Pragma: no-cache");
 	}
 	
 	public function do_logout(){
@@ -65,18 +99,6 @@ class Home extends CI_Controller {
 		$this->load->view('edit', $data);		
 	}
 
-	public function search(){
-		if($this->input->post('name') != "")
-		{	
-			$result = [];
-			$data = $this->input->post('name');
-			$result['record'] = $this->home_model->search_in_db($data);
-			$this->load->view('search_view', $result);		
-		}
-		else{
-		redirect('');			
-		}	
-	}
 	// public function input_edit_function(){
 	// 	$this->home_model->update_entry($data);
 	// 	redirect(''); 

@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <head>
 	<meta charset="utf-8">
 	<title>CURD using CodeIgniter</title>
-
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">	
 	<style type="text/css">
 
 		::selection { background-color: #E13300; color: white; }
@@ -82,52 +82,106 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body class="mydiv">
 
 <div id="container" >
-	<h1>Curd operations using CodeIgniter!</h1>
 
 	<div id="body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-1">
+			</div>			
+			<div class="col-md-6">
+				<h2><a href="<?php echo base_url().'home/do_logout';?>">Logout</a></h2>
+				<h2><a href="<?php echo base_url();?>">home</a></h2>
+				<h1 id='form_head'>User Listing</h1>
+				
+				<?php if (isset($results)) { ?>
+					<table class="table table-striped table-bordered table-hover table-condensed" border="1" cellpadding="0" cellspacing="0">
+						<tr>
+							<th>ID</th>
+							<th>NAME</th>
+							<th>Surname</th>
+							<th>Edit</th>                        
+							<th>delete</th>                        										                        
+						</tr>
+						
+						<?php foreach ($results as $data) { ?>
+							<tr>
+								<td><?php echo $data->id ?></td>                            
+								<td><?php echo $data->name ?></td>
+								<td><?php echo $data->uploaded_on ?></td>
+								<td><a href="<?php echo base_url().'home/input_edit/'.$data->id;?>"> Edit </a> </td>						
+								<td><a href="<?php echo base_url().'home/delete/'.$data->id;?>"> Delete </a> </td>
+							</tr>
+						<?php } ?>
+					</table>
+				<?php } else { ?>
+					<div>No user(s) found.</div>
+				<?php } ?>
 
-	<?php if(!empty($images)){ ?>
+				<?php if (isset($links)) { ?>
+					<h1>
+						<?php echo $links ?>
+					</h1>                
+				<?php } ?>
+			</div>
 
-		<div>
-			<table>
-				<thead>
-					<tr>
-						<td>No.</td>
-						<td>Name</td>
-						<td>Mail</td>
-						<td>Edit</td>						
-						<td>Delete</td>																		
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach($images as $img):?>
-					<tr>
-						<td><?php echo $img['id']?></td>
-						<td><?php echo $img['name']?></td>
-						<td><?php echo $img['uploaded_on']?></td>
-						<td><a href="<?php echo base_url().'home/input_edit/'.$img['id'];?>"> Edit </a> </td>						
-						<td><a href="<?php echo base_url().'home/delete/'.$img['id'];?>"> Delete </a> </td>
-	
-					</tr>
-					<?php endforeach;?>					
-				</tbody>
-			</table>
+			<div  class="col-md-5">
+				<h1>Search entry by: name, mail</h1>
+				<form method="POST" action="<?php echo base_url().'home/index/';?>">
+					Search:<input type="text" name="name_search" size="50" style="margin-left: 27px;margin-bottom: 20px;">
+					<button class="btn btn-success" type="submit" value="search" style="margin:15px"/>Search</button>			
+				</form>
+				<!-- Search result-->
+				<div style="height:300px; overflow:auto">
+					<table class="table table-striped table-bordered table-hover table-condensed" border="1" cellpadding="0" cellspacing="0" >
+						<thead>
+							<tr>
+								<td>No.</td>
+								<td>Name</td>
+								<td>Mail</td>																	
+							</tr>
+						</thead>
+						<tbody>
+							<?php 
+							if(!empty($record)){
+								foreach($record as $row){
+								?>					
+								<tr>
+									<td><?php echo $row->id; ?></td>                            
+									<td><?php echo $row->name; ?></td>
+									<td><?php echo $row->uploaded_on; ?></td>
+								</tr>
+								<?php 	
+								}
+							}else{
+								echo "<p>no results<p/>";
+							}    
+							?>					
+						</tbody>
+					</table>
+				</div>
+
+				<!-- end search result -->
+			</div>
 		</div>
 
-	<?php } ?>	
-		<h1>Add new entry form</h1>
-		<form method="POST" action="<?php echo base_url().'home/add/';?>">
-			Name:<input type="text" name="name" size="50" style="margin-left: 27px;margin-bottom: 20px;"><br/>
-			Mail:<input type="text" name="uploaded_on" size="50"/ style="margin-left: 10px;"><br/>
-			<input type="submit" value="Add" style="margin:15px"/>
-		</form>
-		
-		<h1>Search entry by: name, mail</h1>
-		<form method="POST" action="<?php echo base_url().'home/search/';?>">
-			Search:<input type="text" name="name" size="50" style="margin-left: 27px;margin-bottom: 20px;"><br/>
-			<input type="submit" value="search" style="margin:15px"/>			
-		</form>
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-9">
+				<a href="<?php echo base_url().'paging/custom';?>">Paginated table example</a>
+				<h1>Add new entry form</h1>
+				<form method="POST" action="<?php echo base_url().'home/add/';?>">
+					<label for="email">Name:</label>
+					<input type="text" name="name" size="50" style="margin-left: 27px;margin-bottom: 20px;">
+					<label for="email">Email:</label>
+					<input type="text" name="uploaded_on" size="50"/ style="margin-left: 10px;">
+					<button class="btn btn-primary" type="submit" value="Add" style="margin:15px"/>add</button>
+				</form>
+			</div>
+		</div>
+	</div>
 
+
+		
 	</div>
 
 </div>

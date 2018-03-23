@@ -1,5 +1,5 @@
 <h1>Edit entry</h1>
-
+    <h2><a href="<?php echo base_url().'home/do_logout';?>">Logout</a></h2>
 <form method="POST" action="<?php echo base_url().'home/input_edit_function/'.$result->id ?>">
     <input type="hidden" name="id" value="<?php echo $result->id; ?>"/>
     Name: <input type="text" name="name" value="<?php echo $result->name; ?>" style="margin-left: 27px;margin-bottom: 20px;" /><br/>
