@@ -1,4 +1,4 @@
-#Codeigniter Application with user login.
+####Codeigniter Application with user login.
 
 -download zip or git clone the project repo.
 -put the repo inside the www or htdocs directory.
